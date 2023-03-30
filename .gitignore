@@ -1,3 +1,10 @@
+# environment
 venv
+
+# log
 logs
+# IDE
 .idea
+
+#os
+.DS_Store
