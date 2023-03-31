@@ -14,6 +14,14 @@ class InfoExtractionService:
 
         return ip_addresses
 
+    @staticmethod
+    def get_timestamp_from_single_line_text(single_line_text: str) -> List[str]:
+        regex_pattern_for_timestamp = re.compile(r'\[(\d{2}\/\w{3}\/\d{4}:\d{2}:\d{2}:\d{2})')
+        timestamp = regex_pattern_for_timestamp.findall(single_line_text)
+
+        logger.debug(f"Timestamp (UTC): {timestamp}")
+
+        return timestamp
 
 
 
