@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Dict
 
 from loguru import logger
 from datetime import datetime
@@ -8,6 +9,7 @@ import argparse
 from app.util.info_extraction_util import InfoExtractionUtil
 from app.util.log_filter_util import LogFilterUtil
 from logs_to_analyze import log_base_path
+
 
 logger.remove(0)
 logger.add(sys.stderr, level="INFO")
@@ -72,8 +74,40 @@ if __name__ == "__main__":
 
     filtered_log_file_contents = LogFilterUtil.get_logs_within_timeframe(log_file_contents, args)
 
-    for single_line_log in filtered_log_file_contents:
-        extracted_ips = InfoExtractionUtil.get_ip_from_single_line_text(single_line_log)
-        event_timestamp = InfoExtractionUtil.get_timestamp_from_single_line_text(single_line_log)
-        print(f"IP: {extracted_ips[0]} - Time: {event_timestamp[0]}")
+    ip_wise_hits = {}
+    ip_wise_access_timestamp = {}
+    total_hit_count = len(filtered_log_file_contents)
 
+    for single_line_log in filtered_log_file_contents:
+        extracted_ip = InfoExtractionUtil.get_ip_from_single_line_text(single_line_log)[0]
+        status_code = InfoExtractionUtil.get_status_code_from_single_line_text(single_line_log)
+
+        ip_wise_hits = store_hit_record(ip_wise_hits, extracted_ip, status_code)
+
+        event_timestamp = InfoExtractionUtil.get_timestamp_from_single_line_text(single_line_log)[0]
+
+        if extracted_ip not in ip_wise_access_timestamp:
+            ip_wise_access_timestamp[extracted_ip] = [event_timestamp]
+        else:
+            ip_wise_access_timestamp[extracted_ip].append(event_timestamp)
+
+    ip_wise_hits = {k: dict(sorted(v.items(), key=lambda x: x[1], reverse=True)) for k, v in ip_wise_hits.items()}
+    ip_wise_hits = dict(sorted(ip_wise_hits.items(), key=lambda x: sum(x[1].values()), reverse=True))
+
+    filtered_ip_wise_hits = get_filtered_ip_wise_hits(ip_wise_hits, args.min_hit_count)
+
+    print(f"Printing IPs with a Minimum Hit of {args.min_hit_count}")
+    for ip_address, status_code_wise_hit_count in filtered_ip_wise_hits.items():
+        print("IP: " + "\033[91m" + f"{ip_address}" + "\033[0m")
+        total_hit_for_ip = 0
+
+        for status_code, hit_count in status_code_wise_hit_count.items():
+            if args.status_code_wise:
+                print("Status Code " + "\033[92m" + f"{status_code}: " + "\033[0m" + f"{hit_count} hits")
+            total_hit_for_ip += hit_count
+        print("Total Hit: " + "\033[92m" + f"{total_hit_for_ip}" + "\033[0m")
+        if args.timestamp:
+            for timestamp in ip_wise_access_timestamp[ip_address]:
+                print(f"Access Timestamp: {timestamp}")
+        print("==============================")
+    print(f"Total Hits from All IP: {total_hit_count} Hits.")
