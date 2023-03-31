@@ -6,10 +6,11 @@ from loguru import logger
 from datetime import datetime
 import argparse
 
+from app.dto.util.time_range_dto import TimeRangeDto
+from app.service.insight_provider_service import InsightProviderService
 from app.util.info_extraction_util import InfoExtractionUtil
 from app.util.log_filter_util import LogFilterUtil
 from logs_to_analyze import log_base_path
-
 
 logger.remove(0)
 logger.add(sys.stderr, level="INFO")
@@ -56,6 +57,10 @@ if __name__ == "__main__":
     parser.add_argument("--min-hit-count", nargs='?', type=int, default=1, help="--min-hit-count 5")
     parser.add_argument("--status-code-wise", nargs='?', type=bool, default=False, help="--status-code-wise True")
     parser.add_argument("--timestamp", nargs='?', type=bool, default=False, help="--timestamp True")
+    parser.add_argument("--time-interval", nargs='?', type=int, default=False,
+                        help="Get maximum hits in a time interval in minutes. Example: --time-interval 10")
+    parser.add_argument("--topk", nargs='?', type=int, default=False,
+                        help="Top k timeframes when the hit was maximum Example: --topk 3")
     args = parser.parse_args()
 
     if args.start_time == min_start_time and args.end_time == max_end_time:
@@ -96,6 +101,10 @@ if __name__ == "__main__":
 
     filtered_ip_wise_hits = get_filtered_ip_wise_hits(ip_wise_hits, args.min_hit_count)
 
+    insight_provider_service = InsightProviderService()
+
+    time_range = TimeRangeDto(start_time=args.start_time, end_time=args.end_time)
+
     print(f"Printing IPs with a Minimum Hit of {args.min_hit_count}")
     for ip_address, status_code_wise_hit_count in filtered_ip_wise_hits.items():
         print("IP: " + "\033[91m" + f"{ip_address}" + "\033[0m")
@@ -111,3 +120,6 @@ if __name__ == "__main__":
                 print(f"Access Timestamp: {timestamp}")
         print("==============================")
     print(f"Total Hits from All IP: {total_hit_count} Hits.")
+
+    if args.time_interval:
+        print(*insight_provider_service.get_timeframes_by_hit_count(time_range, filtered_log_file_contents, args.time_interval, args.topk), sep='\n')
