@@ -25,9 +25,3 @@ class LogFilterUtil:
                 logs_within_timeframe.append(single_line_log)
 
         return logs_within_timeframe
-
-
-
-# time_range_1 = TimeRangeDto(start_time="15/Mar/2023:12:00:00", end_time="15/Mar/2023:17:35:00")
-#
-# LogFilterUtil.get_logs_within_timeframe(time_range_1)
