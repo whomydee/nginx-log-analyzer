@@ -11,11 +11,12 @@ with open(log_file_location, 'r') as file:
     log_file_contents = file.read().split("\n")
 
 
-ip_extraction_service = InfoExtractionService()
+info_extraction_service = InfoExtractionService()
 ip_details_service = IpDetailsProviderService()
 
 for single_line_log in log_file_contents:
-    extracted_ips = ip_extraction_service.get_ip_from_single_line_text(single_line_log)
+    extracted_ips = info_extraction_service.get_ip_from_single_line_text(single_line_log)
     for ip_address in extracted_ips:
         ip_details = ip_details_service.get_detail_info(ip_address)
+    event_timestamp = info_extraction_service.get_timestamp_from_single_line_text(single_line_log)
     # print(extracted_ips)
