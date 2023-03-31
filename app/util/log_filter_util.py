@@ -18,10 +18,12 @@ class LogFilterUtil:
         end_time = LogFilterUtil._get_date_time_in_comparable_format(time_range.end_time)
 
         for single_line_log in logs_to_filter:
-            time_stamp_as_string = InfoExtractionUtil.get_timestamp_from_single_line_text(single_line_log)[0]
-            time_stamp = LogFilterUtil._get_date_time_in_comparable_format(time_stamp_as_string)
+            time_stamp = InfoExtractionUtil.get_timestamp_from_single_line_text(single_line_log)
+            if time_stamp:
+                time_stamp_as_string = InfoExtractionUtil.get_timestamp_from_single_line_text(single_line_log)[0]
+                time_stamp = LogFilterUtil._get_date_time_in_comparable_format(time_stamp_as_string)
 
-            if start_time <= time_stamp <= end_time:
-                logs_within_timeframe.append(single_line_log)
+                if start_time <= time_stamp <= end_time:
+                    logs_within_timeframe.append(single_line_log)
 
         return logs_within_timeframe
