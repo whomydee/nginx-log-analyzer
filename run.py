@@ -47,8 +47,13 @@ if __name__ == "__main__":
     min_start_time = datetime.min.strftime('%d/%b/%Y:%H:%M:%S')
     max_end_time = datetime.max.strftime('%d/%b/%Y:%H:%M:%S')
 
-    parser.add_argument("--start-time", nargs='?', type=str, default=min_start_time, help="Start Time in UTC [Format: 15/Mar/2023:12:00:00]")
-    parser.add_argument("--end-time", nargs='?', type=str, default=max_end_time, help="End Time in UTC [Format: 15/Mar/2023:17:35:00]")
+    parser.add_argument("--start-time", nargs='?', type=str, default=min_start_time,
+                        help="--start-time 15/Mar/2023:12:00:00")
+    parser.add_argument("--end-time", nargs='?', type=str, default=max_end_time,
+                        help="--end-time 15/Mar/2023:17:35:00")
+    parser.add_argument("--min-hit-count", nargs='?', type=int, default=1, help="--min-hit-count 5")
+    parser.add_argument("--status-code-wise", nargs='?', type=bool, default=False, help="--status-code-wise True")
+    parser.add_argument("--timestamp", nargs='?', type=bool, default=False, help="--timestamp True")
     args = parser.parse_args()
 
     if args.start_time == min_start_time and args.end_time == max_end_time:
