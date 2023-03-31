@@ -12,6 +12,34 @@ from logs_to_analyze import log_base_path
 logger.remove(0)
 logger.add(sys.stderr, level="INFO")
 
+
+def store_hit_record(ip_wise_hits: Dict, ip_address: str, status_code: int) -> Dict:
+    if ip_address in ip_wise_hits:
+        if status_code in ip_wise_hits[ip_address]:
+            ip_wise_hits[ip_address][status_code] += 1
+        else:
+            ip_wise_hits[ip_address][status_code] = 1
+    else:
+        ip_wise_hits[ip_address] = {}
+        ip_wise_hits[ip_address][status_code] = 1
+
+    return ip_wise_hits
+
+
+def get_filtered_ip_wise_hits(ip_wise_hits: Dict[str, Dict[int, int]], min_hit_count) -> Dict[str, Dict[int, int]]:
+    filtered_ip_wise_hits = {}
+
+    for ip_address, status_code_wise_hit_count in ip_wise_hits.items():
+        total_hit_for_ip = 0
+        for status_code, hit_count in status_code_wise_hit_count.items():
+            total_hit_for_ip += hit_count
+
+        if total_hit_for_ip >= min_hit_count:
+            filtered_ip_wise_hits[ip_address] = status_code_wise_hit_count
+
+    return filtered_ip_wise_hits
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Nginx Access Log Analytics")

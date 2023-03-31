@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Union
 
 from loguru import logger
 
@@ -22,6 +22,17 @@ class InfoExtractionUtil:
         logger.debug(f"Timestamp (UTC): {timestamp}")
 
         return timestamp
+
+    @staticmethod
+    def get_status_code_from_single_line_text(single_line_text: str) -> Union[str, None]:
+        regex_pattern_for_timestamp = re.compile(r'HTTP/1.1*. ([0-9][0-9][0-9])')
+        status_code = regex_pattern_for_timestamp.findall(single_line_text)
+
+        logger.debug(f"Status Code: {status_code}")
+
+        if status_code:
+            return status_code[0]
+        return None
 
 
 
