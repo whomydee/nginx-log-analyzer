@@ -1,7 +1,6 @@
 import argparse
-import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from loguru import logger
 from typing import Dict
@@ -10,7 +9,6 @@ from app.dto.util.time_range_dto import TimeRangeDto
 from app.service.insight_provider_service import InsightProviderService
 from app.util.info_extraction_util import InfoExtractionUtil
 from app.util.log_filter_util import LogFilterUtil
-from logs_to_analyze import log_base_path
 from app.util.log_file_handler_util import get_file_location, set_new_file_location
 
 logger.remove(0)
@@ -128,4 +126,7 @@ if __name__ == "__main__":
     print(f"Total Hits from All IP: {total_hit_count} Hits.")
 
     if args.time_interval:
-        print(*insight_provider_service.get_timeframes_by_hit_count(time_range, filtered_log_file_contents, args.time_interval, args.topk), sep='\n')
+        topk_timeframes_by_git_count = insight_provider_service.get_timeframes_by_hit_count(filtered_log_file_contents, args.time_interval, args.topk)
+        for topk_results in topk_timeframes_by_git_count:
+            print("Timeframe: " + "\033[33m" + f"{topk_results.timeframe}" + "\033[0m" + "\033[36m" + f" - Hit Count: {topk_results.hit_count}" + "\033[0m")
+
