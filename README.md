@@ -99,5 +99,5 @@ Here are some demos of nginx-log-analyzer in action:
 ## 🚀 About Me
 I'm Shad, a Software Engineer in AI/ML who happens to love the DevOps and Architecture side of the Applications.
 
-I currently work in Infolytx (infolytx.com) as a Software Engineer II in AI/ML/Architecture 
+I currently work in Infolytx (https://infolytx.ai) as a **Software Engineer II** in **AI - ML - Architecture** 
 
