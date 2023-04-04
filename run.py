@@ -1,16 +1,15 @@
-import os
+import argparse
 import sys
-from typing import Dict
+from datetime import datetime, timedelta
 
 from loguru import logger
-from datetime import datetime
-import argparse
+from typing import Dict
 
 from app.dto.util.time_range_dto import TimeRangeDto
 from app.service.insight_provider_service import InsightProviderService
 from app.util.info_extraction_util import InfoExtractionUtil
 from app.util.log_filter_util import LogFilterUtil
-from logs_to_analyze import log_base_path
+from app.util.log_file_handler_util import get_file_location, set_new_file_location
 
 logger.remove(0)
 logger.add(sys.stderr, level="INFO")
@@ -47,7 +46,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Nginx Access Log Analytics")
 
-    min_start_time = datetime.min.strftime('%d/%b/%Y:%H:%M:%S')
+    min_start_time = (datetime.min + timedelta(days=365 * 2000)).strftime('%d/%b/%Y:%H:%M:%S')
     max_end_time = datetime.max.strftime('%d/%b/%Y:%H:%M:%S')
 
     parser.add_argument("--start-time", nargs='?', type=str, default=min_start_time,
@@ -61,6 +60,8 @@ if __name__ == "__main__":
                         help="Get maximum hits in a time interval in minutes. Example: --time-interval 10")
     parser.add_argument("--topk", nargs='?', type=int, default=False,
                         help="Top k timeframes when the hit was maximum Example: --topk 3")
+    parser.add_argument("--file-location", nargs='?', type=str, default=False,
+                        help="Set location of the Access Log File: Example: --file Desktop/access.log")
     args = parser.parse_args()
 
     if args.start_time == min_start_time and args.end_time == max_end_time:
@@ -72,7 +73,10 @@ if __name__ == "__main__":
     else:
         logger.info(f"Fetching Logs from {args.start_time} to {args.end_time}")
 
-    log_file_location = os.path.join(log_base_path, "frontendlog.txt")
+    if args.file_location:
+        set_new_file_location(args.file_location)
+
+    log_file_location = get_file_location()
 
     with open(log_file_location, 'r') as file:
         log_file_contents = file.read().split("\n")
@@ -122,4 +126,7 @@ if __name__ == "__main__":
     print(f"Total Hits from All IP: {total_hit_count} Hits.")
 
     if args.time_interval:
-        print(*insight_provider_service.get_timeframes_by_hit_count(time_range, filtered_log_file_contents, args.time_interval, args.topk), sep='\n')
+        topk_timeframes_by_git_count = insight_provider_service.get_timeframes_by_hit_count(filtered_log_file_contents, args.time_interval, args.topk)
+        for topk_results in topk_timeframes_by_git_count:
+            print("Timeframe: " + "\033[33m" + f"{topk_results.timeframe}" + "\033[0m" + "\033[36m" + f" - Hit Count: {topk_results.hit_count}" + "\033[0m")
+
