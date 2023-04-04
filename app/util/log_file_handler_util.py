@@ -16,7 +16,7 @@ def is_file_location_present_in_file() -> bool:
 
 
 def get_new_file_location() -> str:
-    new_file_location = input("Please enter the location of the file: ")
+    new_file_location = input("Please enter the location of the file: \n")
 
     storage_location = os.path.join(storage_base_path, "file_location.txt")
 
