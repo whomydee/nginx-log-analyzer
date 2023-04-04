@@ -9,7 +9,7 @@ from app.util.log_filter_util import LogFilterUtil
 
 
 class InsightProviderService:
-    def get_timeframes_by_hit_count(self, time_range: TimeRangeDto, logs: List[str], time_interval_in_minutes: int, top_k: int = 3) -> \
+    def get_timeframes_by_hit_count(self, logs: List[str], time_interval_in_minutes: int, top_k: int = 3) -> \
     List[TimeFrameWiseHitDto]:
 
         count_of_hits = 0
