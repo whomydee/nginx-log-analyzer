@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Nginx Access Log Analytics")
 
-    min_start_time = datetime.min.strftime('%d/%b/%Y:%H:%M:%S')
+    min_start_time = (datetime.min + timedelta(days=365 * 2000)).strftime('%d/%b/%Y:%H:%M:%S')
     max_end_time = datetime.max.strftime('%d/%b/%Y:%H:%M:%S')
 
     parser.add_argument("--start-time", nargs='?', type=str, default=min_start_time,
