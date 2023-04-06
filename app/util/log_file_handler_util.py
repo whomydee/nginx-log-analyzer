@@ -26,6 +26,7 @@ def get_new_file_location() -> str:
 
     return new_file_location
 
+
 def set_new_file_location(access_log_location: str) -> str:
     new_file_location = access_log_location
 

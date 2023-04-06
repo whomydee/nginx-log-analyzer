@@ -45,7 +45,7 @@ Please enter the location of the file:
 
 ### The Highest Hits for a Specific Time Interval
 
-This fetches the maximum hit that came to your site within the specific time range. Here I used --time-interval 10; it 
+This fetches the maximum hit that came to your site within the specific time range. Here I used --time-interval 10; it
 means I want to see all the hits that came within that timeframe by a 10 minutes interval. I also used --topk 3;
 meaning it will bring me the latest top 3 results that matches that criteria.
 
@@ -99,5 +99,5 @@ Here are some demos of nginx-log-analyzer in action:
 ## 🚀 About Me
 I'm **Shad** Humydee, a Software Engineer in AI/ML who happens to love the DevOps and Architecture side of the Applications.
 
-I currently work in Infolytx (https://infolytx.ai) as a **Software Engineer II** in AI - ML - Architecture 
+I currently work in Infolytx (https://infolytx.ai) as a **Software Engineer II** in AI - ML - Architecture
 
